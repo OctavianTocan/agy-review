@@ -1,6 +1,6 @@
 ---
 name: agy-review
-description: Adversarially review anything - a plan, design, code change, piece of writing, decision, argument, config, or idea - with the `agy` (Antigravity) CLI. A fast second opinion from an independent model that pokes holes in whatever you give it: questionable assumptions, flaws, risks, gaps, failure modes, and a SHIP/REVISE/RETHINK verdict. Use when you want to red-team / stress-test / sanity-check / critique something, "poke holes in this", "what am I missing", "what's wrong with this", "get a second opinion", "review this with agy", or harden it before committing. Pairs with brainstorming and writing-plans.
+description: Adversarially review anything - a plan, design, code change, piece of writing, decision, argument, config, or idea - with the `agy` (Antigravity) CLI. A fast second opinion from an independent model that pokes holes in whatever you give it - questionable assumptions, flaws, risks, gaps, failure modes, and a SHIP/REVISE/RETHINK verdict. Use when you want to red-team / stress-test / sanity-check / critique something, "poke holes in this", "what am I missing", "what's wrong with this", "get a second opinion", "review this with agy", or harden it before committing. Pairs with brainstorming and writing-plans.
 stages: [plan]
 ---
 
