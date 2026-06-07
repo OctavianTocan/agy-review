@@ -1,6 +1,8 @@
 ---
 name: agy-review
 description: Adversarially review anything - a plan, design, code change, piece of writing, decision, argument, config, or idea - with the `agy` (Antigravity) CLI. A fast second opinion from an independent model that pokes holes in whatever you give it - questionable assumptions, flaws, risks, gaps, failure modes, and a SHIP/REVISE/RETHINK verdict. Use when you want to red-team / stress-test / sanity-check / critique something, "poke holes in this", "what am I missing", "what's wrong with this", "get a second opinion", "review this with agy", or harden it before committing. Pairs with brainstorming and writing-plans.
+user-invocable: true
+argument-hint: "[text or file to review]"
 stages: [plan]
 ---
 
@@ -9,6 +11,14 @@ stages: [plan]
 Run anything past the `agy` CLI for a quick adversarial critique — questionable assumptions, flaws, risks, gaps, failure modes, and a SHIP/REVISE/RETHINK verdict — from a second, independent model. Use it to harden a thing *before* you commit to it, not to replace your own judgment.
 
 It reviews **whatever you give it** — a plan or design is just one case. Also: a code change, an essay or doc, a product/architecture decision, an argument or pitch, a config, a prompt, a name, an idea.
+
+## What to review (arguments)
+
+Invoked as `/agy-review [text or file to review]`. Interpret the argument — `$ARGUMENTS` — as *what to critique*:
+
+- a **file path** → read it (or pass it straight through with `-f`) and review its contents;
+- **pasted text** or an inline description → review that;
+- **nothing** → review the most relevant artifact in the current context (e.g. the plan, draft, or decision you just produced), and state what you picked.
 
 ## When to use
 
