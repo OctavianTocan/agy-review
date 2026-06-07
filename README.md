@@ -1,26 +1,22 @@
 # agy-review
 
-> Adversarially review *anything* with the `agy` (Antigravity) CLI before you commit to it — a fast, independent, leashed second opinion that pokes holes in whatever you give it.
+> Adversarially review *anything* with the `agy` (Antigravity) CLI before you commit to it — a fast, independent second opinion that pokes holes in whatever you give it.
 
 ## What It Does
 
-`agy-review` is an AI-agent skill that pipes content into the `agy` CLI's non-interactive print mode (`agy -p`) with a tight, direct critique prompt, and returns a concise review: questionable assumptions, flaws, risks, gaps, failure modes, and a `SHIP / REVISE / RETHINK` verdict. It's meant to harden a thing *before* you commit to it.
+`agy-review` is an AI-agent skill that pipes content into the `agy` CLI's non-interactive print mode and returns a concise red-team critique: questionable assumptions, flaws, risks, gaps, failure modes, and a `SHIP / REVISE / RETHINK` verdict. It's meant to harden a thing *before* you commit to it.
 
-It reviews **whatever you give it** — a plan or design is just one case. Also: a code change, an essay or doc, a product/architecture decision, an argument or pitch, a config, a prompt, a name, an idea.
+It reviews **whatever you give it** — a plan or design is just one case. Also: a code change, an essay or doc, a product/architecture decision, an argument or pitch, a config, a prompt, a name, an idea. Raw code, numbered specs, and prose all work.
 
-It defaults to **Gemini 3.5 Flash in its highest thinking mode** and is built — from a lot of hammering on the real CLI — to be defensive about three `agy` behaviours:
-
-1. **Code-spec deflection.** `agy` is a coding-agent harness. Input that reads like "implement this" — raw code / named APIs/functions (`setInterval`, `Express`, `HTTP 429`) — makes it ask for a workspace instead of reviewing. **Prose reviews cleanly; describe code conceptually.**
-2. **Throttled-tier deflection.** A heavily-used thinking tier can start returning a canned greeting. The script detects it and retries.
-3. **Agentic wander.** Unleashed, `agy` can crawl/grep whatever workspace it remembers. The script runs it from a **fresh empty directory**, hard-kills it on timeout, and **refuses to print wander logs** as a review — so it can never go spelunking in your codebase.
+Defaults to **Gemini 3.5 Flash in its highest thinking mode**. The script runs `agy` from a throwaway empty directory, so it never reads or touches your repo — it just asks a question and prints the answer.
 
 ## Skill Architecture
 
 ```
 agy-review/
-├── SKILL.md                 # routing + how-to (what it reviews, the prose-vs-code rule, the leash, reading results)
+├── SKILL.md                 # routing + how-to (what it reviews, arguments, reading the verdict)
 └── scripts/
-    └── agy-review.sh        # wraps `agy -p`: builds the critique prompt, leashes agy, detects deflection/wander, retries
+    └── agy-review.sh        # wraps `agy --print`: builds the critique prompt, runs it, prints the result
 ```
 
 ## Usage
@@ -38,15 +34,12 @@ scripts/agy-review.sh -m "Gemini 3.1 Pro (High)" -f decision.md
 ```
 
 Options: `-f/--file`, `-c/--context`, `-m/--model`, `-h/--help`.
-Env: `AGY_REVIEW_MODEL`, `AGY_PRINT_TIMEOUT` (80s), `AGY_HARD_TIMEOUT` (95s), `AGY_REVIEW_RETRIES` (3).
-Exit codes: `0` critique printed · `1` usage error · `2` `agy` not found · `3` no clean review after retries (rephrase more conceptually, or try a different tier).
+Env: `AGY_REVIEW_MODEL`, `AGY_PRINT_TIMEOUT` (2m), `AGY_HARD_TIMEOUT` (150s).
+Exit codes: `0` critique printed · `1` usage error · `2` `agy` not found or returned nothing.
 
-## The golden rule
+## Implementation note
 
-Prose reviews cleanly. To review **code**, describe its design and decisions in plain prose, not as a raw spec:
-
-- ❌ `1. per-IP counter in Express middleware; 2. HTTP 429 over 100 req/min; 3. reset via setInterval(fn,60000)`
-- ✅ `keep a per-user request count in each server's memory, clear it on a 60-second timer, reject over-limit requests until the next window; several servers behind a load balancer`
+`agy`'s `-p` / `--print` / `--prompt` flag takes the prompt as its **value**, so every other flag (`--model`, `--print-timeout`) must come *before* it, with `-p "$PROMPT"` last. Put `-p` first and it silently swallows the next flag as the prompt. The script handles this; keep the ordering if you edit it.
 
 ## Requirements
 
